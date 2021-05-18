@@ -7,8 +7,10 @@ import {
   Animated,
 } from 'react-native';
 
+import styles from './style';
+
 const Card = (props) => {
-  const {cardKey, cardValue, isOpen, onClick} = props;
+  const {cardKey, cardValue, cardWidth, cardHeight, isOpen, onClick} = props;
   const animatedValue = React.useRef(new Animated.Value(0));
   const backInterpolate = animatedValue.current.interpolate({
     inputRange: [0, 180],
@@ -23,9 +25,16 @@ const Card = (props) => {
   };
 
   const [flipState, setFlipState] = React.useState(0);
-  animatedValue.current.addListener(({value}) => {
-    setFlipState(value);
-  });
+  React.useEffect(() => {
+    const curRef = animatedValue.current;
+    curRef.addListener(({value}) => {
+      setFlipState(value);
+    });
+    return () => {
+      curRef.removeAllListeners();
+    };
+  }, []);
+
   // const flipCard = () => {
   //   if ( flipState >= 90 ) {
   //     Animated.timing(animatedValue.current, {
@@ -79,55 +88,17 @@ const Card = (props) => {
   // original flipState == 0 : back
   // flipped flipState == 180 : front (show value)
   const extraStyle = flipState >= 90 ? styles.cardStyleFront : styles.cardStyleBack;
-  const textStyle = flipState >= 90 ? {} : styles.textStyleBack;
+  const textStyle = flipState >= 90 ? [styles.textBaseFront] : [styles.textBaseBack, styles.textStyleBack];
 
   return (
       <TouchableOpacity onPress={() => onClick(cardKey)}>
-        <View style={styles.containerStyle}>
-          <Animated.View style={[backAnimatedStyle, styles.flipCardCombined, extraStyle]}>
-            <Text style={textStyle}>{cardValue/*flipState >= 90 ? cardValue : '??'*/}</Text>
+        <View style={styles.containerStyle, {width: cardWidth, height: cardHeight}}>
+          <Animated.View style={[backAnimatedStyle, styles.flipCardCombined, extraStyle, {width: cardWidth-10, height: cardHeight-10}]}>
+            <Text style={[...textStyle]}>{/*cardValue*/flipState >= 90 ? cardValue : '??'}</Text>
           </Animated.View>
         </View>
       </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  containerStyle: {
-    width: 120,
-    height: 160,
-    backgroundColor: 'yellow',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  flipCardCombined: {
-    width: 110,
-    height: 150,
-    borderRadius: 5,
-    borderWidth: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'red',
-    position: 'absolute',
-  },
-  cardStyleFront: {
-    backgroundColor: 'red',
-  },
-  cardStyleBack: {
-    backgroundColor: 'yellow',
-  },
-  textStyleBack: {
-    transform: [
-      {
-        rotateY: '180deg',
-      }
-    ],
-  }
-})
 
 export default Card;

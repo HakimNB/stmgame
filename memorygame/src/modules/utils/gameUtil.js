@@ -12,6 +12,9 @@ const GameUtil = {
   getWindowWidth: () => {
     return Dimensions.get('window').width;
   },
+  getWindowHeight: () => {
+    return Dimensions.get('window').height;
+  },
   GameState: Object.freeze(gameState),
   generateRandomizedArray: (count, min, max) => {
     const arr = [];
