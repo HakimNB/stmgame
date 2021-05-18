@@ -1,30 +1,20 @@
 import React from 'react';
-import {
-  Button,
-  View,
-  Text,
-  StyleSheet,
-  Alert,
-} from 'react-native';
+import {Button, View, Text, StyleSheet, Alert} from 'react-native';
 
 import Config from 'react-native-config';
 
-
 import {useSelector, useDispatch} from 'react-redux';
 
-import {
-  Action,
-} from '@/modules';
+import {Action} from '@/modules';
 
-import Card from '@/components/card/Card';
 import GameBoard from '@/components/gameboard/GameBoard';
 
 import GameUtil from '@/modules/utils/gameUtil';
 
-const COL = parseInt(Config.COL_COUNT);
-const ROW = parseInt(Config.ROW_COUNT);
-const MIN = parseInt(Config.NUM_MIN);
-const MAX = parseInt(Config.NUM_MAX);
+const COL = parseInt(Config.COL_COUNT, 10);
+const ROW = parseInt(Config.ROW_COUNT, 10);
+const MIN = parseInt(Config.NUM_MIN, 10);
+const MAX = parseInt(Config.NUM_MAX, 10);
 
 const GameScreen = () => {
   const dispatch = useDispatch();
@@ -37,13 +27,13 @@ const GameScreen = () => {
   const gameState = useSelector((state) => state.game.gameState);
 
   React.useEffect(() => {
-    if ( gameState == GameUtil.GameState.RANDOMIZING ) {
+    if (gameState == GameUtil.GameState.RANDOMIZING) {
       dispatch(Action.game.generateBoard(ROW, COL, MIN, MAX));
     }
   }, [dispatch, gameState]);
 
   React.useEffect(() => {
-    if ( !entireArray || entireArray.length == 0 ) {
+    if (!entireArray || entireArray.length == 0) {
       dispatch(Action.game.generateBoard(ROW, COL, MIN, MAX));
     }
   }, [dispatch, entireArray]);
@@ -64,13 +54,19 @@ const GameScreen = () => {
   //   setSecondIndex(-1);
   // }, [dispatch, firstIndex, secondIndex]);
 
-  const resetPair = React.useCallback((firstIndex, secondIndex) => {
-    dispatch(Action.game.setPairState(firstIndex, secondIndex, false));
-  }, [dispatch]);
+  const resetPair = React.useCallback(
+    (firstIndex, secondIndex) => {
+      dispatch(Action.game.setPairState(firstIndex, secondIndex, false));
+    },
+    [dispatch],
+  );
 
-  const toggleCard = React.useCallback((cardKey) => {
-    dispatch(Action.game.setCardState(cardKey, !stateArray[cardKey]));
-  }, [dispatch]);
+  const toggleCard = React.useCallback(
+    (cardKey) => {
+      dispatch(Action.game.setCardState(cardKey, !stateArray[cardKey]));
+    },
+    [dispatch, stateArray],
+  );
 
   // console.log("firstIndex: " + firstIndex + " secondIndex: " + secondIndex);
 
@@ -96,14 +92,25 @@ const GameScreen = () => {
 
   const [renderingAlert, setRenderingAlert] = React.useState(false);
   React.useEffect(() => {
-    if ( gameState === GameUtil.GameState.ENDED && !renderingAlert ) {
+    if (gameState === GameUtil.GameState.ENDED && !renderingAlert) {
       setRenderingAlert(true);
-      Alert.alert("Congratulations!", "You win this game by " + boardSteps + " steps!", [{text: "Try another round", onPress: () => {
-        dispatch(Action.game.setGameState(GameUtil.GameState.RANDOMIZING));
-        dispatch(Action.game.generateBoard(ROW, COL, MIN, MAX));
-      }}]);
+      Alert.alert(
+        'Congratulations!',
+        'You win this game by ' + boardSteps + ' steps!',
+        [
+          {
+            text: 'Try another round',
+            onPress: () => {
+              dispatch(
+                Action.game.setGameState(GameUtil.GameState.RANDOMIZING),
+              );
+              dispatch(Action.game.generateBoard(ROW, COL, MIN, MAX));
+            },
+          },
+        ],
+      );
     }
-    if ( gameState === GameUtil.GameState.PLAYING && renderingAlert ) {
+    if (gameState === GameUtil.GameState.PLAYING && renderingAlert) {
       setRenderingAlert(false);
     }
   }, [dispatch, gameState, boardSteps, renderingAlert]);
@@ -145,7 +152,7 @@ const GameScreen = () => {
   return (
     <View style={style.board}>
       <View style={style.titleContainer}>
-        <Button title="Restart" onPress={onClickRestart}></Button>
+        <Button title="Restart" onPress={onClickRestart} />
         {/*<Text style={style.textSteps}>{"Steps: " + boardSteps}</Text>*/}
         <Text style={style.textSteps}>
           <Text style={style.textStepsLabel}>Steps: </Text>
@@ -153,8 +160,21 @@ const GameScreen = () => {
         </Text>
       </View>
       {gameState !== GameUtil.GameState.RANDOMIZING ? (
-        <GameBoard row={ROW} col={COL} boardWidth={boardWidth} boardHeight={boardHeight} boardNumbers={entireArray} boardSteps={boardSteps} stateArray={stateArray} gameState={gameState} resetPair={resetPair} toggleCard={toggleCard}/>
-      ) : <View/>}
+        <GameBoard
+          row={ROW}
+          col={COL}
+          boardWidth={boardWidth}
+          boardHeight={boardHeight}
+          boardNumbers={entireArray}
+          boardSteps={boardSteps}
+          stateArray={stateArray}
+          gameState={gameState}
+          resetPair={resetPair}
+          toggleCard={toggleCard}
+        />
+      ) : (
+        <View />
+      )}
     </View>
   );
 

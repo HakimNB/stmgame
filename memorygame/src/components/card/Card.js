@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Animated,
-} from 'react-native';
+import {View, Text, TouchableOpacity, Animated} from 'react-native';
 
 import styles from './style';
 
@@ -20,8 +14,8 @@ const Card = (props) => {
     transform: [
       {
         rotateY: backInterpolate,
-      }
-    ]
+      },
+    ],
   };
 
   const [flipState, setFlipState] = React.useState(0);
@@ -63,7 +57,7 @@ const Card = (props) => {
       toValue: 180,
       duration: 800,
     }).start();
-  }
+  };
 
   const closeCard = () => {
     Animated.timing(animatedValue.current, {
@@ -71,33 +65,46 @@ const Card = (props) => {
       toValue: 0,
       duration: 800,
     }).start();
-  }
+  };
 
   // console.log("Card : " + cardKey + " isOpen: " + isOpen + " flipState: " + flipState);
 
-  if ( isOpen ) {
-    if ( flipState == 0 ) {
+  if (isOpen) {
+    if (flipState == 0) {
       openCard();
     }
   } else {
-    if ( flipState == 180 ) {
+    if (flipState == 180) {
       closeCard();
     }
   }
 
   // original flipState == 0 : back
   // flipped flipState == 180 : front (show value)
-  const extraStyle = flipState >= 90 ? styles.cardStyleFront : styles.cardStyleBack;
-  const textStyle = flipState >= 90 ? [styles.textBaseFront] : [styles.textBaseBack, styles.textStyleBack];
+  const extraStyle =
+    flipState >= 90 ? styles.cardStyleFront : styles.cardStyleBack;
+  const textStyle =
+    flipState >= 90
+      ? [styles.textBaseFront]
+      : [styles.textBaseBack, styles.textStyleBack];
 
   return (
-      <TouchableOpacity onPress={() => onClick(cardKey)}>
-        <View style={styles.containerStyle, {width: cardWidth, height: cardHeight}}>
-          <Animated.View style={[backAnimatedStyle, styles.flipCardCombined, extraStyle, {width: cardWidth-10, height: cardHeight-10}]}>
-            <Text style={[...textStyle]}>{/*cardValue*/flipState >= 90 ? cardValue : '??'}</Text>
-          </Animated.View>
-        </View>
-      </TouchableOpacity>
+    <TouchableOpacity onPress={() => onClick(cardKey)}>
+      <View
+        style={(styles.containerStyle, {width: cardWidth, height: cardHeight})}>
+        <Animated.View
+          style={[
+            backAnimatedStyle,
+            styles.flipCardCombined,
+            extraStyle,
+            {width: cardWidth - 10, height: cardHeight - 10},
+          ]}>
+          <Text style={[...textStyle]}>
+            {/*cardValue*/ flipState >= 90 ? cardValue : '??'}
+          </Text>
+        </Animated.View>
+      </View>
+    </TouchableOpacity>
   );
 };
 

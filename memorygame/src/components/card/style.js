@@ -23,7 +23,6 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'ivory',
-
   },
   cardStyleFront: {
     backgroundColor: 'ivory',
@@ -43,7 +42,7 @@ export default StyleSheet.create({
     transform: [
       {
         rotateY: '180deg',
-      }
+      },
     ],
-  }
+  },
 });

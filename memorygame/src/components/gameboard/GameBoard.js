@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-  // Button,
-  View,
-  // Text,
-  StyleSheet,
-  // Alert,
-} from 'react-native';
-
-import Config from 'react-native-config';
-
+import {View} from 'react-native';
 
 // import {useSelector, useDispatch} from 'react-redux';
 
@@ -28,7 +19,18 @@ import style from './style';
 // const MAX = parseInt(Config.NUM_MAX);
 
 const GameBoard = (props) => {
-  const {row, col, boardWidth, boardHeight, boardNumbers, boardSteps, stateArray, gameState, resetPair, toggleCard} = props;
+  const {
+    row,
+    col,
+    boardWidth,
+    boardHeight,
+    boardNumbers,
+    boardSteps,
+    stateArray,
+    gameState,
+    resetPair,
+    toggleCard,
+  } = props;
 
   // const dispatch = useDispatch();
   // const boardNumbers = useSelector((state) => state.game.boardNumbers);
@@ -41,8 +43,6 @@ const GameBoard = (props) => {
 
   var rowAndColArr = GameUtil.splitToRowAndCol(boardNumbers, row, col);
 
-  console.log("stateArray: ", stateArray);
-
   const [firstIndex, setFirstIndex] = React.useState(-1);
   const [secondIndex, setSecondIndex] = React.useState(-1);
   const [closeTimer, setCloseTimer] = React.useState(null);
@@ -54,7 +54,6 @@ const GameBoard = (props) => {
   }, [closeTimer]);
 
   const closePair = React.useCallback(() => {
-    console.log("closingPair firstIndex: " + firstIndex + " secondIndex: " + secondIndex);
     // dispatch(Action.game.setPairState(firstIndex, secondIndex, false));
     resetPair(firstIndex, secondIndex);
     setCloseTimer(null);
@@ -62,17 +61,13 @@ const GameBoard = (props) => {
     setSecondIndex(-1);
   }, [resetPair, firstIndex, secondIndex]);
 
-  console.log("firstIndex: " + firstIndex + " secondIndex: " + secondIndex);
-
   React.useEffect(() => {
-    if ( firstIndex >= 0 && secondIndex >= 0 ) {
+    if (firstIndex >= 0 && secondIndex >= 0) {
       const firstVal = boardNumbers[firstIndex];
       const secondVal = boardNumbers[secondIndex];
-      console.log("checking firstVal: " + firstVal + " secondVal: " + secondVal);
-      if ( firstVal != secondVal ) {
-        if ( closeTimer == null ) {
+      if (firstVal != secondVal) {
+        if (closeTimer == null) {
           // schedule close
-          console.log("schedule close pair");
           const timer = setTimeout(closePair, 1000);
           setCloseTimer(timer);
         }
@@ -86,16 +81,15 @@ const GameBoard = (props) => {
     }
   }, [firstIndex, secondIndex, boardNumbers, closeTimer, closePair]);
 
-
   const [renderingAlert, setRenderingAlert] = React.useState(false);
   React.useEffect(() => {
-    if ( gameState === GameUtil.GameState.ENDED && !renderingAlert ) {
+    if (gameState === GameUtil.GameState.ENDED && !renderingAlert) {
       setRenderingAlert(true);
-    };
-    if ( gameState === GameUtil.GameState.PLAYING && renderingAlert ) {
+    }
+    if (gameState === GameUtil.GameState.PLAYING && renderingAlert) {
       setRenderingAlert(false);
     }
-    if ( gameState === GameUtil.GameState.RANDOMIZING ) {
+    if (gameState === GameUtil.GameState.RANDOMIZING) {
       setFirstIndex(-1);
       setSecondIndex(-1);
       setCloseTimer(null);
@@ -103,27 +97,30 @@ const GameBoard = (props) => {
     }
   }, [boardSteps, gameState, renderingAlert]);
 
-  const onClickCard = React.useCallback((cardKey) => {
-    console.log("onClickCard: " + cardKey + " firstIndex: " + firstIndex + " secondIndex: " + secondIndex + " stateArray[" + cardKey + "]: " + stateArray[cardKey]);
-    if ( stateArray[cardKey] || cardKey == firstIndex || cardKey == secondIndex || closeTimer != null ) {
-      // cards are opened
-      console.log(cardKey + " isOpened! returning...");
-      return;
-    }
-    const isFirst = firstIndex < 0;
-    const canOpen = secondIndex < 0;
-    if (isFirst) {
-      console.log("setting firstIndex to: " + cardKey);
-      setFirstIndex(cardKey);
-    } else {
-      console.log("setting secondIndex to: " + cardKey);
-      setSecondIndex(cardKey);
-    }
-    if ( canOpen ) {
-      // dispatch(Action.game.setCardState(cardKey, !stateArray[cardKey]));
-      toggleCard(cardKey);
-    }
-    }, [stateArray, firstIndex, secondIndex, closeTimer],
+  const onClickCard = React.useCallback(
+    (cardKey) => {
+      if (
+        stateArray[cardKey] ||
+        cardKey == firstIndex ||
+        cardKey == secondIndex ||
+        closeTimer != null
+      ) {
+        // cards are opened
+        return;
+      }
+      const isFirst = firstIndex < 0;
+      const canOpen = secondIndex < 0;
+      if (isFirst) {
+        setFirstIndex(cardKey);
+      } else {
+        setSecondIndex(cardKey);
+      }
+      if (canOpen) {
+        // dispatch(Action.game.setCardState(cardKey, !stateArray[cardKey]));
+        toggleCard(cardKey);
+      }
+    },
+    [stateArray, firstIndex, secondIndex, closeTimer, toggleCard],
   );
 
   // const onClickRestart = React.useCallback(() => {
@@ -144,14 +141,22 @@ const GameBoard = (props) => {
           <View key={index} style={style.row}>
             {rowArr.map((el, idx) => {
               return (
-                <Card key={index * col + idx} cardKey={index*col+idx} cardValue={el} cardWidth={cardWidth} cardHeight={cardHeight} isOpen={stateArray[index*col+idx]} onClick={onClickCard}
+                <Card
+                  key={index * col + idx}
+                  cardKey={index * col + idx}
+                  cardValue={el}
+                  cardWidth={cardWidth}
+                  cardHeight={cardHeight}
+                  isOpen={stateArray[index * col + idx]}
+                  onClick={onClickCard}
                 />
               );
             })}
           </View>
-        )
+        );
       })}
-      </View>);
+    </View>
+  );
 };
 
 // const style = StyleSheet.create({

@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<View
+  accessible={true}
+  focusable={true}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    Object {
+      "opacity": 1,
+    }
+  }
+>
+  <View
+    style={
+      Object {
+        "height": undefined,
+        "width": undefined,
+      }
+    }
+  >
+    <View
+      style={
+        Object {
+          "alignItems": "center",
+          "backgroundColor": "blue",
+          "borderRadius": 5,
+          "borderWidth": 5,
+          "height": NaN,
+          "justifyContent": "center",
+          "margin": 5,
+          "position": "absolute",
+          "transform": Array [
+            Object {
+              "rotateY": "180deg",
+            },
+          ],
+          "width": NaN,
+        }
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "white",
+              "fontSize": 24,
+            },
+            Object {
+              "transform": Array [
+                Object {
+                  "rotateY": "180deg",
+                },
+              ],
+            },
+          ]
+        }
+      >
+        ??
+      </Text>
+    </View>
+  </View>
+</View>
+`;

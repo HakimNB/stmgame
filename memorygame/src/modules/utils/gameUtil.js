@@ -1,6 +1,4 @@
-import {
-  Dimensions,
-} from 'react-native';
+import {Dimensions} from 'react-native';
 
 const gameState = {
   RANDOMIZING: 0,
@@ -45,7 +43,7 @@ const GameUtil = {
   splitToRowAndCol: (array, row, col) => {
     const arr = [];
     var start = 0;
-    while ((start + col) <= array.length) {
+    while (start + col <= array.length) {
       const r = array.slice(start, start + col);
       arr.push(r);
       start += col;

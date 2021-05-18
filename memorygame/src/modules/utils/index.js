@@ -1,1 +1,1 @@
-export { default as GameUtil } from './gameUtil';
+export {default as GameUtil} from './gameUtil';

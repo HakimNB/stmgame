@@ -4,13 +4,13 @@ import Types from './game.types';
 
 import GameUtil from '@/modules/utils/gameUtil';
 
-function* onGenerateBoardSaga(action) {
+export function* onGenerateBoardSaga(action) {
   const {row, col, min, max} = action.payload;
   const totalCards = row * col;
   const halfArray = GameUtil.generateRandomizedArray(totalCards / 2, min, max);
   const fullArray = GameUtil.shuffleInPlace([...halfArray, ...halfArray]);
   const boolArray = [];
-  for(var i = 0; i < totalCards; i++ ) {
+  for (var i = 0; i < totalCards; i++) {
     boolArray.push(false);
   }
   yield put({type: Types.SET_BOARD_OPENSTATES, payload: boolArray});
@@ -19,23 +19,29 @@ function* onGenerateBoardSaga(action) {
   yield put({type: Types.SET_GAME_STATE, payload: GameUtil.GameState.PLAYING});
 }
 
-function* onSetCardStateSaga(action) {
+export function* onSetCardStateSaga(action) {
   const {index, state} = action.payload;
-  const boardOpenStates = yield select((state) => state.game.boardOpenStates);
-  const boardSteps = yield select((state) => state.game.boardSteps);
-  if ( boardOpenStates[index] != state ) {
+  const boardOpenStates = yield select((st) => st.game.boardOpenStates);
+  const boardSteps = yield select((st) => st.game.boardSteps);
+  if (boardOpenStates[index] != state) {
     boardOpenStates[index] = state;
-    yield put({type: Types.SET_BOARD_OPENSTATES, payload: [...boardOpenStates]});
-    if ( state ) {
+    yield put({
+      type: Types.SET_BOARD_OPENSTATES,
+      payload: [...boardOpenStates],
+    });
+    if (state) {
       yield put({type: Types.SET_BOARD_STEPS, payload: boardSteps + 1});
     }
-    if ( boardOpenStates.every(e => e === true) ) {
-      yield put({type: Types.SET_GAME_STATE, payload: GameUtil.GameState.ENDED});
+    if (boardOpenStates.every((e) => e === true)) {
+      yield put({
+        type: Types.SET_GAME_STATE,
+        payload: GameUtil.GameState.ENDED,
+      });
     }
   }
 }
 
-function* onSetPairStateSaga(action) {
+export function* onSetPairStateSaga(action) {
   const {firstIndex, secondIndex, state} = action.payload;
   const boardOpenStates = yield select((st) => st.game.boardOpenStates);
   boardOpenStates[firstIndex] = state;
@@ -43,14 +49,12 @@ function* onSetPairStateSaga(action) {
   yield put({type: Types.SET_BOARD_OPENSTATES, payload: [...boardOpenStates]});
 }
 
-function* runGameSaga() {
+export function* runGameSaga() {
   yield takeLatest(Types.GENERATE_BOARD, onGenerateBoardSaga);
   yield takeLatest(Types.SET_CARD_STATE, onSetCardStateSaga);
   yield takeLatest(Types.SET_PAIR_STATE, onSetPairStateSaga);
 }
 
 export function* gameSaga() {
-  yield all([
-    call(runGameSaga),
-  ]);
+  yield all([call(runGameSaga)]);
 }
